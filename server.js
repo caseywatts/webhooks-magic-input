@@ -16,12 +16,12 @@ var ws = new WebSocket(HOST);
 var el = document.getElementById('theSharedString');
 
 ws.onmessage = function (event) {
-  // console.log(event.data);
+  console.log("received: " + event.data);
   el.value = event.data;
 };
 
 el.oninput = function (event) {
-  // console.log(el.value);
+  console.log("input: " + el.value);
   ws.send(el.value);
 }
 </script>
@@ -31,13 +31,14 @@ el.oninput = function (event) {
 const wss = new SocketServer({ server });
 
 wss.on('connection', (ws) => {
-  // console.log('Client connected');
+  console.log('Client connected');
   ws.on('close', () => console.log('Client disconnected'));
 
   ws.on('message', (data) => {
-    // console.log(data);
+    console.log('received ' + data);
     theSharedString = data;
     wss.clients.forEach((client) => {
+      console.log('sending ' + theSharedString)
       client.send(theSharedString);
     });
   })
