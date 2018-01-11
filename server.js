@@ -5,6 +5,7 @@ const app = express()
 
 // state
 let theSharedString = "hi";
+const PORT = process.env.PORT || 3000;
 
 const server = app.get('/', (req, res) => res.send(`
 Magic Input
@@ -25,7 +26,7 @@ el.oninput = function (event) {
 }
 </script>
   `))
-.listen(3000, () => console.log('Example app listening on port 3000!'))
+.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
 
 const wss = new SocketServer({ server });
 
