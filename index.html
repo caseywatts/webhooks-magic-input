@@ -1,28 +1,33 @@
-<div>This input field is updated in realtime. Any edit you make will propogate to the other computers looking at this, immediately.</div>
-<input id="theSharedString">
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  var HOST = location.origin.replace(/^http/, 'ws')
-  var socket = io();
-  // var ws = new WebSocket(HOST);
-  var el = document.getElementById('theSharedString');
+<body style="background:#F1F1D4; text-align:center; padding: 30px;">
+  <h2>Diary of Tom Riddle</h2>
+  <div style="margin: 10px;">This "diary" is in sync with many others like it.</div>
+  <div style="margin: 10px;">Anyone looking at one will see what you type immediately.</div>
+  <div style="margin: 10px;">They can talk back in the same way.</div>
+  <input style="margin:30px; padding:10px; width: 500px;" id="theSharedString">
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var HOST = location.origin.replace(/^http/, 'ws')
+    var socket = io();
+    // var ws = new WebSocket(HOST);
+    var el = document.getElementById('theSharedString');
 
-  socket.on('update-shared-string', function (payload) {
-    el.value = payload;
-  });
+    socket.on('shared-string-to-client', function (payload) {
+      el.value = payload;
+    });
 
-  el.oninput = function (event) {
-    console.log("input: " + el.value);
-    socket.emit('update-shared-string', el.value);
-  }
+    el.oninput = function (event) {
+      console.log("input: " + el.value);
+      socket.emit('shared-string-to-server', el.value);
+    }
 
-  // Show a disconnected message when the WebSocket is closed.
-  socket.onopen = function(event) {
-    console.log('socket opened');
-  };
+    // Show a disconnected message when the WebSocket is closed.
+    socket.onopen = function(event) {
+      console.log('socket opened');
+    };
 
-  // Show a disconnected message when the WebSocket is closed.
-  socket.onclose = function(event) {
-    console.log('socket closed');
-  };
-</script>
+    // Show a disconnected message when the WebSocket is closed.
+    socket.onclose = function(event) {
+      console.log('socket closed');
+    };
+  </script>
+</body>

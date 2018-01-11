@@ -4,7 +4,7 @@ const app = express()
 const path = require('path')
 
 // state
-let state = {theSharedString: 'hi'}
+let state = {theSharedString: 'Hello, I am Tom Riddle.'}
 const PORT = process.env.PORT || 3000
 const INDEX = path.join(__dirname, 'index.html')
 
@@ -21,12 +21,13 @@ io.on('connection', (socket) => {
   socket.on('close', () => console.log('Client disconnected'))
 
   // send out the initial state
-  socket.emit('update-shared-string', state.theSharedString, () => { console.log('error sending state whoopsies') })
+  socket.emit('shared-string-to-client', state.theSharedString, () => { console.log('error sending state whoopsies') })
 
-  socket.on('update-shared-string', (data) => {
+  socket.on('shared-string-to-server', (data) => {
     console.log('received ' + data)
+    state.theSharedString = data
 
-    console.log('sending ' + data)
-    io.emit('update-shared-string', data)
+    console.log('sending ' + state.theSharedString)
+    io.emit('shared-string-to-client', state.theSharedString)
   })
 })
