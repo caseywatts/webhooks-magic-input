@@ -1,14 +1,17 @@
-<html>
-  <body>
-    <p id='server-time'></p>
-    <script>
-      var HOST = location.origin.replace(/^http/, 'ws')
-      var ws = new WebSocket(HOST);
-      var el = document.getElementById('server-time');
+<div>This input field is updated in realtime. Any edit you make will propogate to the other computers looking at this, immediately.</div>
+<input id="theSharedString" value="${theSharedString}">
+<script>
+  var HOST = location.origin.replace(/^http/, 'ws')
+  var ws = new WebSocket(HOST);
+  var el = document.getElementById('theSharedString');
 
-      ws.onmessage = function (event) {
-        el.innerHTML = 'Server time: ' + event.data;
-      };
-    </script>
-  </body>
-</html>
+  ws.onmessage = function (event) {
+    console.log("received: " + event.data);
+    el.value = event.data;
+  };
+
+  el.oninput = function (event) {
+    console.log("input: " + el.value);
+    ws.send(el.value);
+  }
+</script>
