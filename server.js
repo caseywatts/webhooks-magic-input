@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 const server = app.get('/', (req, res) => res.send(`
 Magic Input
-<input id="theSharedString" value="hi">
+<input id="theSharedString" value="${theSharedString}">
 <script>
 var HOST = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(HOST);
