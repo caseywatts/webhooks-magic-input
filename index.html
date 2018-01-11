@@ -1,30 +1,28 @@
 <div>This input field is updated in realtime. Any edit you make will propogate to the other computers looking at this, immediately.</div>
 <input id="theSharedString">
+<script src="/socket.io/socket.io.js"></script>
 <script>
   var HOST = location.origin.replace(/^http/, 'ws')
-  var ws = new WebSocket(HOST);
+  var socket = io();
+  // var ws = new WebSocket(HOST);
   var el = document.getElementById('theSharedString');
 
-  ws.onmessage = function (event) {
-    const data = JSON.parse(event.data)
-    console.log("received: " + data);
-    console.log("received: " + event.data);
-    console.log("received: " + event);
-    el.value = data.theSharedString;
-  };
+  socket.on('update-shared-string', function (payload) {
+    el.value = payload;
+  });
 
   el.oninput = function (event) {
     console.log("input: " + el.value);
-    ws.send(JSON.stringify({theSharedString: el.value}));
+    socket.emit('update-shared-string', el.value);
   }
 
   // Show a disconnected message when the WebSocket is closed.
-  ws.onopen = function(event) {
+  socket.onopen = function(event) {
     console.log('socket opened');
   };
 
   // Show a disconnected message when the WebSocket is closed.
-  ws.onclose = function(event) {
+  socket.onclose = function(event) {
     console.log('socket closed');
   };
 </script>

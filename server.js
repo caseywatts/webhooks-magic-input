@@ -1,6 +1,5 @@
 const express = require('express')
-const ws = require('ws')
-const SocketServer = ws.Server
+const socketIO = require('socket.io')
 const app = express()
 const path = require('path')
 
@@ -9,27 +8,25 @@ let state = {theSharedString: 'hi'}
 const PORT = process.env.PORT || 3000
 const INDEX = path.join(__dirname, 'index.html')
 
-const server = app.get('/', (req, res) => res.sendFile(INDEX))
-.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+app.get('/', (req, res) => res.sendFile(INDEX))
 
-const wss = new SocketServer({ server })
+const server = require('http').createServer(app)
+server.listen(PORT)
+console.log(`Example app listening on port ${PORT}!`)
 
-wss.on('connection', (ws) => {
+const io = socketIO(server)
+
+io.on('connection', (socket) => {
   console.log('Client connected')
-  ws.on('close', () => console.log('Client disconnected'))
+  socket.on('close', () => console.log('Client disconnected'))
 
-  sendState(ws)
+  // send out the initial state
+  socket.emit('update-shared-string', state.theSharedString, () => { console.log('error sending state whoopsies') })
 
-  ws.on('message', (data) => {
+  socket.on('update-shared-string', (data) => {
     console.log('received ' + data)
-    state.theSharedString = data
-    wss.clients.forEach((client) => {
-      console.log('sending ' + JSON.stringify(state))
-      sendState(client)
-    })
+
+    console.log('sending ' + data)
+    io.emit('update-shared-string', data)
   })
 })
-
-const sendState = (destination) => {
-  destination.send(JSON.stringify(state), () => { console.log('error sending state whoopsies') })
-}
