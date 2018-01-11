@@ -8,7 +8,7 @@ let theSharedString = "hi";
 const PORT = process.env.PORT || 3000;
 
 const server = app.get('/', (req, res) => res.send(`
-Magic Input
+<div>This input field is updated in realtime. Any edit you make will propogate to the other computers looking at this, immediately.</div>
 <input id="theSharedString" value="${theSharedString}">
 <script>
 var HOST = location.origin.replace(/^http/, 'ws')
